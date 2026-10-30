@@ -21,7 +21,7 @@ Version 0.2
 
 Data Pipeline
 
-Validator
+Validator (done)
 
 Cleaner
 

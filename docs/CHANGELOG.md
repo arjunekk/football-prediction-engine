@@ -12,9 +12,11 @@
 
 ## v0.2.0
 
-- Dataset validator
-- Dataset cleaner
-- Feature engineering
+- Dataset validator (complete: schema, nulls, dates, scores, team names,
+  `neutral` type; separate non-fatal `find_warnings`)
+- Test suite (pytest) for loader and validator
+- Dataset cleaner (planned)
+- Feature engineering (planned)
 
 (In Progress)
 
