@@ -94,7 +94,7 @@ def find_warnings(df: pd.DataFrame) -> list[str]:
             f"{duplicates} rows repeat the same date/home_team/away_team."
         )
 
-    dates = pd.to_datetime(df["date"], errors="coerce")
+    dates = pd.to_datetime(df["date"], format="ISO8601", errors="coerce")
     if dates.notna().all() and not dates.is_monotonic_increasing:
         warnings.append(
             "Rows are not sorted by date; rating stages need "
@@ -138,7 +138,7 @@ def _check_dates(df: pd.DataFrame) -> list[str]:
     """Return an error if non-null dates cannot be parsed."""
 
     present = df["date"].dropna()
-    parsed = pd.to_datetime(present, errors="coerce")
+    parsed = pd.to_datetime(present, format="ISO8601", errors="coerce")
     unparseable = int(parsed.isna().sum())
     if unparseable:
         return [f"date contains {unparseable} unparseable values."]
