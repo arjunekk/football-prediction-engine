@@ -52,6 +52,19 @@ def test_missing_values_reported_per_column(valid_df):
     assert any("home_team contains 1 missing" in e for e in errors)
 
 
+def test_missing_scores_are_errors_not_warnings(valid_df):
+    """Incomplete historical results must never be silently tolerated."""
+
+    valid_df["home_score"] = valid_df["home_score"].astype("float")
+    valid_df["away_score"] = valid_df["away_score"].astype("float")
+    valid_df.loc[0, ["home_score", "away_score"]] = None
+
+    errors = validate_dataset(valid_df)
+    assert "home_score contains 1 missing values." in errors
+    assert "away_score contains 1 missing values." in errors
+    assert not any("missing" in w for w in find_warnings(valid_df))
+
+
 def test_unparseable_dates(valid_df):
     valid_df.loc[0, "date"] = "not-a-date"
     errors = validate_dataset(valid_df)

@@ -45,11 +45,30 @@ _REAL_RESULTS = (
     not _REAL_RESULTS.exists(),
     reason="external international_results dataset is not cloned",
 )
-def test_real_dataset_passes_validation():
-    """Integration check against the real (externally cloned) dataset."""
+def test_validator_agrees_with_real_dataset():
+    """Integration check against the real (externally cloned) dataset.
+
+    The dataset is maintained externally (Decision 001), so a given snapshot
+    may legitimately contain incomplete rows, e.g. matches whose scores were
+    not yet recorded. The test therefore does not assert "zero errors".
+    Instead it checks that the validator's report is *consistent with the
+    data*:
+
+    * structural problems (missing columns, bad dates, negative scores,
+      bad team names, non-boolean ``neutral``) never occur, and
+    * the only error allowed is missing score values, whose reported count
+      must equal an independent pandas null count.
+    """
 
     from src.data.validator import validate_dataset
 
     df = load_dataset("international_results", "results")
     assert isinstance(df, pd.DataFrame)
-    assert validate_dataset(df) == []
+
+    expected = {
+        f"{column} contains {count} missing values."
+        for column in ("home_score", "away_score")
+        if (count := int(df[column].isnull().sum())) > 0
+    }
+
+    assert set(validate_dataset(df)) == expected

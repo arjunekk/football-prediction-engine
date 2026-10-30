@@ -110,3 +110,29 @@ Accepted
 Reason:
 Removes the `sys.path.append` hack from scripts. Tests that need the
 external dataset skip automatically when it is not cloned (Decision 001).
+
+
+---
+
+## Decision 008
+
+Title:
+Integration test checks validator consistency, not a clean dataset
+
+Status:
+Accepted
+
+Reason:
+The external dataset (Decision 001) changes independently of this repo, and
+a given snapshot may contain historical matches whose scores are not yet
+recorded. Asserting `validate_dataset(df) == []` made the suite fail
+whenever such a snapshot was cloned, which tests the dataset rather than
+the validator.
+
+Chosen:
+`test_validator_agrees_with_real_dataset` asserts that the validator's
+errors exactly equal the missing-score counts computed independently with
+pandas. Any other error category (columns, dates, negative scores, team
+names, `neutral` type) still fails the test. The validator is unchanged:
+missing scores remain errors (never warnings), and a unit test pins that
+behaviour. Deciding what to do with unscored rows belongs to the cleaner.
