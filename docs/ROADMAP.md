@@ -23,7 +23,7 @@ Data Pipeline
 
 Validator (done)
 
-Cleaner
+Cleaner (done)
 
 Feature Engineering
 

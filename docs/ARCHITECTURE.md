@@ -10,11 +10,14 @@ Explain each folder.
 
 ## Module Responsibilities
 
-loader.py
+loader.py - reads CSVs from datasets/<source>/<table>.csv; never hardcodes paths.
 
-validator.py
+validator.py - detects problems, never modifies data. `validate_dataset`
+returns fatal errors; `find_warnings` returns non-fatal findings.
 
-cleaner.py
+cleaner.py - fixes what is safe (whitespace, unscored rows, exact duplicates,
+dtypes, chronological order) and returns a `CleaningReport`. Raises
+`ValueError` for anything it cannot repair. See Decision 009.
 
 feature_engineering.py
 

@@ -15,7 +15,7 @@
 - Dataset validator (complete: schema, nulls, dates, scores, team names,
   `neutral` type; separate non-fatal `find_warnings`)
 - Test suite (pytest) for loader and validator
-- Dataset cleaner (planned)
+- Dataset cleaner (`clean_dataset` returns cleaned data and a `CleaningReport`; Decision 009)
 - Feature engineering (planned)
 
 (In Progress)

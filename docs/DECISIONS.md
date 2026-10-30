@@ -136,3 +136,37 @@ pandas. Any other error category (columns, dates, negative scores, team
 names, `neutral` type) still fails the test. The validator is unchanged:
 missing scores remain errors (never warnings), and a unit test pins that
 behaviour. Deciding what to do with unscored rows belongs to the cleaner.
+
+
+---
+
+## Decision 009
+
+Title:
+Cleaner policy: fix only what is safe, report everything, fail on the rest
+
+Status:
+Accepted
+
+Reason:
+Cleaning silently changes training data, so every change must be explicit
+and countable, and anything ambiguous must stay truthful.
+
+Chosen:
+`clean_dataset(df) -> (cleaned_df, CleaningReport)`.
+- Keep all teams and tournaments. Filtering (e.g. FIFA members only) is a
+  per-competition feature-engineering concern, not a cleaning one.
+- Keep extreme scores (e.g. 31-0). Margin capping belongs in the rating
+  model so the stored data stays truthful.
+- Drop rows with missing scores (no outcome to learn from) and count them.
+- Drop exact duplicate rows only. Same date/teams with different scores
+  (e.g. Tahiti v New Caledonia, 1974) are kept as possibly separate matches.
+- Sort by date with a stable sort so same-day order is preserved.
+- No team renaming until a dataset needs it (`former_names.csv` is already
+  reflected in `results.csv`).
+- Raise `ValueError` for what cannot be repaired safely: missing columns,
+  unparseable dates, negative or fractional scores.
+
+Alternatives:
+Filter to FIFA members during cleaning; cap scores at the cleaner; impute
+missing scores. All rejected: they hide information or invent data.
